@@ -17,8 +17,8 @@ pipeline {
                     npm ci
                     npm run build
                 '''
-                }
             }
+        }
 
         stage('Test') {
             agent {
@@ -35,28 +35,25 @@ pipeline {
                     test -f build/index.html
                     npm test
                 '''
+            }
+        }
+
+        stage('Deploy') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
                 }
             }
-
-            stage('Deploy') {
-                agent {
-                    docker {
-                        image 'node:18-alpine'
-                        reuseNode true
-                    }
-                }
-                steps {
-                    sh '''
-                        ls -la
-                        node --version
-                        npm --version
-                        test -f build/index.html
-                        npm run deploy
-                    '''
-                    }
-                }
+            steps {
+                sh '''
+                    ls -la
+                    node --version
+                    npm --version
+                    test -f build/index.html
+                    npm run deploy
+                '''
             }
-
-
         }
     }
+}
