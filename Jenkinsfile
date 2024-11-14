@@ -29,31 +29,16 @@ pipeline {
             }
             steps {
                 sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    test -f build/index.html
                     npm test
                 '''
             }
         }
+    }
 
-        stage('Deploy') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    test -f build/index.html
-                    npm run deploy
-                '''
-            }
+    post {
+        always {
+            junit 'test-results/junit.xml'
         }
+
     }
 }
